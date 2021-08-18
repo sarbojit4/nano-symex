@@ -20,10 +20,14 @@ object Program {
 
   case class Var       (name : String,
                         ptype : PType.Value = PType.PInt)   extends Expr
+
+  case class Array     (name : String,
+                        ptype : PType.Value = PType.PInt)   extends Expr
+
   case class IntConst  (value : BigInt)                     extends Expr
   case class Plus      (left : Expr, right : Expr)          extends Expr
   case class Times     (left : Expr, right : Expr)          extends Expr
-  case class ArrayElem (name : String, index : Expr)          extends Expr
+  case class ArrayElem (ar : Array, index : Expr)          extends Expr
 
   implicit def int2Expr(v : Int) : Expr = IntConst(v)
 
@@ -206,12 +210,13 @@ object ArrayProg {
 
   val b = Var("b")
   val c = Var("c")
+  val a = Array("a")
 
   val p = Prog(
-   ArrayElem("a",0) := 0,
-   ArrayElem("a",1) := 0,
+   ArrayElem(a,0) := 0,
+   ArrayElem(a,1) := 0,
    If (b < 2 & b >= 0)(
-    c := ArrayElem("a",b),
+    c := ArrayElem(a,b),
     Assert(0 =/= c)
    )
   )
@@ -226,27 +231,28 @@ object InsSort {
   val x = Var("x")
   val y = Var("y")
   val len = Var("len")
+  val a = Array("a")
 
   val p = Prog(
     i := 1,
     While (i < len)(
-      x := ArrayElem("a",i),
+      x := ArrayElem(a,i),
       j := i - 1,
-      y := ArrayElem("a",j),
+      y := ArrayElem(a,j),
       While(j >= 0 & y > x)(
-        ArrayElem("a",j+1) := y,
+        ArrayElem(a,j+1) := y,
         j := j - 1,
 	If(j >= 0)(
-	  y := ArrayElem("a",j)
+	  y := ArrayElem(a,j)
 	)
       ),
-      ArrayElem("a",j+1) := x,
+      ArrayElem(a,j+1) := x,
       i := i + 1
     ),
     i := 0,
     While(i+1 < len)(
-      x := ArrayElem("a",i),
-      y := ArrayElem("a",i+1),
+      x := ArrayElem(a,i),
+      y := ArrayElem(a,i+1),
       Assert(x <= y),
       i := i + 1
     )

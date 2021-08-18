@@ -37,6 +37,7 @@ object IntExprEncoder extends ExprEncoder {
   def encode(expr : Expr)
             (implicit store : SymbStore) : String = expr match {
     case v : Var     => store(v)
+    case ArrayElem(ar, i) => "(select " + ar.name + " " + encode(i) +")"
     case IntConst(v) => if (v >= 0) v.toString else ("(- " + -v + ")")
     case Plus(l, r)  => "(+ " + encode(l) + " " + encode(r) + ")"
     case Times(l, r) => "(* " + encode(l) + " " + encode(r) + ")"

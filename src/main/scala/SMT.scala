@@ -22,6 +22,11 @@ abstract class SMT {
   def declareConst(name : String, typ : String) : Unit
 
   /**
+   * Declare a new array of the given type.
+   */
+  def declareArray(name : String, typ : String) : Unit
+
+  /**
    * Declare a new constant of the given type and return its name.
    */
   def freshConst(typ : String) : String
@@ -98,6 +103,9 @@ abstract class SMTProcess(cmd : Array[String]) extends SMT {
 
   def declareConst(name : String, typ : String) : Unit =
     sendCommand("(declare-const " + name + " " + typ + ")")
+
+  def declareArray(name : String, typ : String) : Unit =
+    sendCommand("(declare-fun " + name + " () (Array Int " + typ + "))")
 
   def freshConst(typ : String) : String = {
     val name = "const_" + nameCounter
